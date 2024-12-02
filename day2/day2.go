@@ -11,13 +11,20 @@ import (
 )
 
 func main() {
-	part1_solution := part1()
-	part2_solution := part2()
+	p1_answer := make(chan int)
+	p2_answer := make(chan int)
+
+	go part1(p1_answer)
+	go part2(p2_answer)
+
+	part1_solution := <-p1_answer
+	part2_solution := <-p2_answer
+
 	fmt.Println("Part 1:", part1_solution)
 	fmt.Println("Part 2:", part2_solution)
 }
 
-func part1() int {
+func part1(answer chan<- int) {
 	report := parse_levels("input.txt")
 	total_safe := 0
 	for _, levels := range report {
@@ -25,10 +32,10 @@ func part1() int {
 			total_safe += 1
 		}
 	}
-	return total_safe
+	answer <- total_safe
 }
 
-func part2() int {
+func part2(answer chan<- int) {
 	reports := parse_levels("input.txt")
 	total_safe := 0
 	for _, levels := range reports {
@@ -37,7 +44,7 @@ func part2() int {
 		}
 	}
 
-	return total_safe
+	answer <- total_safe
 }
 
 func parse_levels(filename string) [][]int {
