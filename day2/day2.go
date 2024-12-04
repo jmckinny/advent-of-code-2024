@@ -11,43 +11,43 @@ import (
 )
 
 func main() {
-	p1_answer := make(chan int)
-	p2_answer := make(chan int)
+	p1Answer := make(chan int)
+	p2Answer := make(chan int)
 
-	go part1(p1_answer)
-	go part2(p2_answer)
+	go part1(p1Answer)
+	go part2(p2Answer)
 
-	part1_solution := <-p1_answer
-	part2_solution := <-p2_answer
+	part1Solution := <-p1Answer
+	part2Solution := <-p2Answer
 
-	fmt.Println("Part 1:", part1_solution)
-	fmt.Println("Part 2:", part2_solution)
+	fmt.Println("Part 1:", part1Solution)
+	fmt.Println("Part 2:", part2Solution)
 }
 
 func part1(answer chan<- int) {
-	report := parse_levels("input.txt")
-	total_safe := 0
+	report := parseLevels("input.txt")
+	totalSafe := 0
 	for _, levels := range report {
-		if report_is_safe(levels) {
-			total_safe += 1
+		if reportIsSafe(levels) {
+			totalSafe += 1
 		}
 	}
-	answer <- total_safe
+	answer <- totalSafe
 }
 
 func part2(answer chan<- int) {
-	reports := parse_levels("input.txt")
-	total_safe := 0
+	reports := parseLevels("input.txt")
+	totalSafe := 0
 	for _, levels := range reports {
-		if report_is_safe_tolerant(levels) {
-			total_safe += 1
+		if reportIsSafeTolerant(levels) {
+			totalSafe += 1
 		}
 	}
 
-	answer <- total_safe
+	answer <- totalSafe
 }
 
-func parse_levels(filename string) [][]int {
+func parseLevels(filename string) [][]int {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal("Failed to open file", filename)
@@ -79,7 +79,7 @@ func parse_levels(filename string) [][]int {
 	return levels
 }
 
-func report_is_safe(report []int) bool {
+func reportIsSafe(report []int) bool {
 	decreasing := report[0] > report[1]
 	for i := 1; i < len(report); i++ {
 		prev := report[i-1]
@@ -101,14 +101,14 @@ func report_is_safe(report []int) bool {
 	return true
 }
 
-func report_is_safe_tolerant(report []int) bool {
-	if report_is_safe(report) {
+func reportIsSafeTolerant(report []int) bool {
+	if reportIsSafe(report) {
 		return true
 	}
 
 	for i := 0; i < len(report); i++ {
-		new_levels := RemoveIndex(report, i)
-		if report_is_safe(new_levels) {
+		newLevels := RemoveIndex(report, i)
+		if reportIsSafe(newLevels) {
 			return true
 		}
 	}

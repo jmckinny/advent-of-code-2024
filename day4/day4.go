@@ -10,10 +10,10 @@ import (
 
 func main() {
 	data := ParseFile("input.txt")
-	part1_solution := part1(data)
-	part2_solution := part2(data)
-	fmt.Println("Part 1:", part1_solution)
-	fmt.Println("Part 2:", part2_solution)
+	part1Solution := part1(data)
+	part2Solution := part2(data)
+	fmt.Println("Part 1:", part1Solution)
+	fmt.Println("Part 2:", part2Solution)
 }
 
 func part1(input []string) int {
@@ -32,7 +32,7 @@ func part2(input []string) int {
 	total := 0
 	for i, row := range input {
 		for j := range len(row) {
-			if ValidX_MAS(input, i, j) {
+			if ValidCrossMAS(input, i, j) {
 				total += 1
 			}
 		}
@@ -41,43 +41,43 @@ func part2(input []string) int {
 	return total
 }
 
-func ValidX_MAS(input []string, row int, col int) bool {
-	if get_rune_at(input, row, col) != 'A' {
+func ValidCrossMAS(input []string, row int, col int) bool {
+	if getRuneAt(input, row, col) != 'A' {
 		return false
 	}
 
 	offsets := []struct {
-		row_dir, col_dir int
+		rowDir, colDir int
 	}{
 		{1, -1},  // Down + Left
 		{1, 1},   // Down + Right
 		{-1, 1},  // Up + Right
 		{-1, -1}, // Up + Left
 	}
-	m_count := 0
-	s_count := 0
+	mCount := 0
+	sCount := 0
 	for _, dir := range offsets {
-		if get_rune_at(input, row+dir.row_dir, col+dir.col_dir) == 'S' {
-			s_count += 1
+		if getRuneAt(input, row+dir.rowDir, col+dir.colDir) == 'S' {
+			sCount += 1
 		}
-		if get_rune_at(input, row+dir.row_dir, col+dir.col_dir) == 'M' {
-			m_count += 1
+		if getRuneAt(input, row+dir.rowDir, col+dir.colDir) == 'M' {
+			mCount += 1
 		}
 	}
 	// Prevent:
 	// S . M
 	// . A .
 	// M . S
-	no_bad_arrange := get_rune_at(input, row+1, col+1) != get_rune_at(input, row-1, col-1)
+	noBadArrange := getRuneAt(input, row+1, col+1) != getRuneAt(input, row-1, col-1)
 
-	return m_count == 2 && s_count == 2 && no_bad_arrange
+	return mCount == 2 && sCount == 2 && noBadArrange
 }
 
 func CountValidXMAS(input []string, row int, col int) int {
 	count := 0
 
 	offsets := []struct {
-		row_dir, col_dir int
+		rowDir, colDir int
 	}{
 		{-1, 0},  // Up
 		{1, 0},   // Down
@@ -90,9 +90,9 @@ func CountValidXMAS(input []string, row int, col int) int {
 	}
 
 	for _, dir := range offsets {
-		if get_rune_at(input, row+dir.row_dir, col+dir.col_dir) == 'M' &&
-			get_rune_at(input, row+2*dir.row_dir, col+2*dir.col_dir) == 'A' &&
-			get_rune_at(input, row+3*dir.row_dir, col+3*dir.col_dir) == 'S' {
+		if getRuneAt(input, row+dir.rowDir, col+dir.colDir) == 'M' &&
+			getRuneAt(input, row+2*dir.rowDir, col+2*dir.colDir) == 'A' &&
+			getRuneAt(input, row+3*dir.rowDir, col+3*dir.colDir) == 'S' {
 			count++
 		}
 	}
@@ -100,13 +100,13 @@ func CountValidXMAS(input []string, row int, col int) int {
 	return count
 }
 
-func get_rune_at(input []string, row int, col int) rune {
+func getRuneAt(input []string, row int, col int) rune {
 	const INVALID = '.'
 
-	height_valid := (row >= 0 && row < len(input))
-	width_valid := (col >= 0 && col < len(input[0]))
+	heightValid := (row >= 0 && row < len(input))
+	widthValid := (col >= 0 && col < len(input[0]))
 
-	if !height_valid || !width_valid {
+	if !heightValid || !widthValid {
 		return INVALID
 	}
 
