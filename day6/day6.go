@@ -40,12 +40,9 @@ const (
 func part1(filename string) int {
 	mapGrid := parseFile(filename)
 	direction := UP
+	row, col := mapGrid.getGaurdPos()
 
-	for {
-		row, col := mapGrid.getGaurdPos()
-		if row == -1 && col == -1 {
-			break
-		}
+	for row != -1 || col != -1 {
 
 		nextRow, nextCol, nextDir := mapGrid.getGaurdMove(row, col, direction)
 		if nextRow == -1 && nextCol == -1 && nextDir == -1 {
@@ -55,11 +52,75 @@ func part1(filename string) int {
 		direction = nextDir
 		mapGrid[row][col] = SEEN
 		mapGrid[nextRow][nextCol] = GUARD
+		row = nextRow
+		col = nextCol
 	}
 	return mapGrid.countSeen()
 }
 
-func part2(filename string) int { return 0 }
+func part2(filename string) int {
+	mapGrid := parseFile(filename)
+	positions := 0
+	jobs := make([]chan bool, 0)
+	for row := range mapGrid {
+		for col := range mapGrid[row] {
+			if mapGrid[row][col] != OPEN {
+				continue
+			}
+			mapCopy := mapGrid.clone()
+			mapCopy[row][col] = OBSTRUCTED
+			job := make(chan bool)
+			jobs = append(jobs, job)
+			go isLikelyInfinite(mapCopy, job)
+		}
+	}
+
+	for _, job := range jobs {
+		jobResult := <-job
+		if jobResult {
+			positions += 1
+		}
+	}
+
+	return positions
+}
+
+func isLikelyInfinite(mapGrid Map, resultChannel chan bool) {
+	maxSteps := len(mapGrid) * len(mapGrid[0])
+	step := 0
+	direction := UP
+	row, col := mapGrid.getGaurdPos()
+
+	for {
+		if step > maxSteps {
+			resultChannel <- true
+			return
+		}
+
+		if row == -1 && col == -1 {
+			break
+		}
+
+		nextRow, nextCol, nextDir := mapGrid.getGaurdMove(row, col, direction)
+		if nextRow == -1 && nextCol == -1 && nextDir == -1 {
+			break
+		}
+		direction = nextDir
+		row = nextRow
+		col = nextCol
+		step += 1
+	}
+	resultChannel <- false
+}
+
+func (self Map) clone() Map {
+	duplicate := make([][]MapTile, len(self))
+	for i := range self {
+		duplicate[i] = make([]MapTile, len(self[i]))
+		copy(duplicate[i], self[i])
+	}
+	return duplicate
+}
 
 func (self Map) inBounds(row int, col int) bool {
 	heightValid := (row >= 0 && row < len(self))
