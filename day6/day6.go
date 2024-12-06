@@ -86,7 +86,7 @@ func part2(filename string) int {
 }
 
 func isLikelyInfinite(mapGrid Map, resultChannel chan bool) {
-	maxSteps := len(mapGrid) * len(mapGrid[0])
+	maxSteps := len(mapGrid)*len(mapGrid[0]) - len(mapGrid)
 	step := 0
 	direction := UP
 	row, col := mapGrid.getGaurdPos()
