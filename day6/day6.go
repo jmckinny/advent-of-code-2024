@@ -47,7 +47,7 @@ func part1(filename string) int {
 			break
 		}
 
-		nextRow, nextCol, nextDir := mapGrid.getGaurdMove(direction)
+		nextRow, nextCol, nextDir := mapGrid.getGaurdMove(row, col, direction)
 		if nextRow == -1 && nextCol == -1 && nextDir == -1 {
 			mapGrid[row][col] = SEEN
 			break
@@ -82,8 +82,7 @@ func (self Map) isObstruction(row int, col int) bool {
 	return self[row][col] == OBSTRUCTED
 }
 
-func (self Map) getGaurdMove(currentDir Direction) (int, int, Direction) {
-	curRow, curCol := self.getGaurdPos()
+func (self Map) getGaurdMove(curRow int, curCol int, currentDir Direction) (int, int, Direction) {
 	offsets := map[Direction]struct {
 		rowDir, colDir int
 	}{
