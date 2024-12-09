@@ -61,9 +61,14 @@ func (self Equation) trueViaAddMult() bool {
 }
 
 func (self Equation) trueViaAddMultHelper(index int, total int) bool {
+	if total > self.testValue {
+		return false
+	}
+
 	if index == len(self.numbers) {
 		return total == self.testValue
 	}
+
 	return self.trueViaAddMultHelper(index+1, total*self.numbers[index]) || self.trueViaAddMultHelper(index+1, total+self.numbers[index])
 }
 
@@ -74,9 +79,14 @@ func (self Equation) trueViaAddMultConcat() bool {
 }
 
 func (self Equation) trueViaAddMultConcatHelper(curNumbers []int, total int) bool {
+	if total > self.testValue {
+		return false
+	}
+
 	if len(curNumbers) == 0 {
 		return total == self.testValue
 	}
+
 	val := curNumbers[0]
 	remaining := RemoveIndex(curNumbers, 0)
 
