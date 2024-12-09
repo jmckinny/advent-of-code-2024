@@ -52,8 +52,8 @@ const (
 )
 
 type Equation struct {
-	testValue int
 	numbers   []int
+	testValue int
 }
 
 func (self Equation) trueViaAddMult() bool {
@@ -152,7 +152,7 @@ func parseFile(filename string) []Equation {
 			numbers = append(numbers, num)
 		}
 
-		equations = append(equations, Equation{testValue, numbers})
+		equations = append(equations, Equation{numbers, testValue})
 	}
 
 	return equations
